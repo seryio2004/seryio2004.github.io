@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Espía</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #eee;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>El Espía</h1>
+        <div id="menu">
+            <button id="createDeckBtn">Crear Mazo de Cartas</button>
+            <button id="playGameBtn">Jugar</button>
+        </div>
+        <div id="createDeck" style="display: none;">
+            <h2>Crear Mazo</h2>
+            <input type="text" id="locationInput" placeholder="Introduce un sitio...">
+            <button id="addLocationBtn">Añadir Sitio</button>
+            <ul id="locationsList"></ul>
+            <button id="doneBtn">Terminar</button>
+        </div>
+        <div id="play" style="display: none;">
+            <h2>Jugar</h2>
+            <p>Introduce el número de jugadores:</p>
+            <input type="number" id="numPlayersInput" min="2" value="2">
+            <button id="startGameBtn">Iniciar Juego</button>
+            <div id="playerCards" style="display: none;">
+                <h3>Cartas Repartidas:</h3>
+                <p id="currentCard"></p>
+                <button id="nextCardBtn">Mostrar Siguiente Carta</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const createDeckBtn = document.getElementById('createDeckBtn');
+            const playGameBtn = document.getElementById('playGameBtn');
+            const createDeckSection = document.getElementById('createDeck');
+            const playSection = document.getElementById('play');
+            const locationInput = document.getElementById('locationInput');
+            const addLocationBtn = document.getElementById('addLocationBtn');
+            const doneBtn = document.getElementById('doneBtn');
+            const locationsList = document.getElementById('locationsList');
+            const numPlayersInput = document.getElementById('numPlayersInput');
+            const startGameBtn = document.getElementById('startGameBtn');
+            const playerCardsSection = document.getElementById('playerCards');
+            const currentCard = document.getElementById('currentCard');
+            const nextCardBtn = document.getElementById('nextCardBtn');
+
+            let locations = [];
+            let gameDeck = [];
+            let currentPlayer = 0;
+
+            // Mostrar la sección de creación de mazo
+            createDeckBtn.addEventListener('click', () => {
+                createDeckSection.style.display = 'block';
+                playSection.style.display = 'none';
+            });
+
+            // Mostrar la sección de juego
+            playGameBtn.addEventListener('click', () => {
+                if (locations.length === 0) {
+                    alert('Primero debes crear un mazo de cartas.');
+                } else {
+                    playSection.style.display = 'block';
+                    createDeckSection.style.display = 'none';
+                }
+            });
+
+            // Añadir una ubicación al mazo
+            addLocationBtn.addEventListener('click', () => {
+                const location = locationInput.value.trim();
+                if (location) {
+                    locations.push(location);
+                    const li = document.createElement('li');
+                    li.textContent = location;
+                    locationsList.appendChild(li);
+                    locationInput.value = ''; // Limpiar el campo de entrada
+                } else {
+                    alert('Por favor, introduce un sitio válido.');
+                }
+            });
+
+            // Terminar la creación del mazo
+            doneBtn.addEventListener('click', () => {
+                if (locations.length > 0) {
+                    alert('Mazo creado con éxito.');
+                    createDeckSection.style.display = 'none';
+                } else {
+                    alert('El mazo está vacío. Añade al menos un sitio.');
+                }
+            });
+
+            // Iniciar el juego
+            startGameBtn.addEventListener('click', () => {
+                const numPlayers = parseInt(numPlayersInput.value);
+                if (numPlayers < 2) {
+                    alert('El número de jugadores debe ser al menos 2.');
+                    return;
+                }
+
+                const location = locations[Math.floor(Math.random() * locations.length)];
+                gameDeck = Array(numPlayers - 1).fill(location);
+                gameDeck.push('Espía');
+                shuffleArray(gameDeck);
+
+                currentPlayer = 0;
+                currentCard.textContent = '';
+                nextCardBtn.disabled = false;
+
+                playerCardsSection.style.display = 'block';
+            });
+
+            // Mostrar la siguiente carta
+            nextCardBtn.addEventListener('click', () => {
+                if (currentPlayer < gameDeck.length) {
+                    currentCard.textContent = `Jugador ${currentPlayer + 1}: ${gameDeck[currentPlayer]}`;
+                    currentPlayer++;
+                } else {
+                    currentCard.textContent = 'Todas las cartas han sido mostradas.';
+                    nextCardBtn.disabled = true;
+                }
+            });
+
+            // Función para mezclar el mazo
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+        });
+    </script>
+</body>
+</html>
