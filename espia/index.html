@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Espía</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>El Espía</h1>
+        <div id="menu">
+            <button id="createDeckBtn">Crear Mazo de Cartas</button>
+            <button id="playGameBtn">Jugar</button>
+        </div>
+        <div id="game" style="display: none;">
+            <div id="createDeck" style="display: none;">
+                <h2>Crear Mazo</h2>
+                <input type="text" id="locationInput" placeholder="Introduce un sitio...">
+                <button id="addLocationBtn">Añadir Sitio</button>
+                <button id="doneBtn">Terminar</button>
+                <ul id="locationsList"></ul>
+            </div>
+            <div id="play" style="display: none;">
+                <h2>Jugar</h2>
+                <p>Introduce el número de jugadores:</p>
+                <input type="number" id="numPlayersInput" min="2" value="2">
+                <button id="startGameBtn">Iniciar Juego</button>
+                <div id="playerCards" style="display: none;">
+                    <h3>Cartas Repartidas:</h3>
+                    <ul id="playerCardsList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>
