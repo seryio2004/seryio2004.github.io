@@ -410,7 +410,7 @@
 
                     showCardTimeout = setTimeout(() => {
                         currentCard.textContent = '';
-                    }, 2000);
+                    }, 60000);
                 } else {
                     currentCard.textContent = 'Fin del juego';
                     nextCardBtn.disabled = true;
@@ -423,7 +423,7 @@
                     if (isShowingQuestionMark) {
                         currentCard.textContent = '';
                     }
-                }, 1000);
+                }, 60000);
             }
 
             // Función para mezclar un array
