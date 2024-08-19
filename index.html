@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Espía</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            width: calc(100% - 40px);
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #eee;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #currentCard {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        #locationsList button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #locationsList button:hover {
+            background-color: #c82333;
+        }
+
+        .backBtn {
+            background-color: #6c757d;
+        }
+
+        .backBtn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>El Espía</h1>
+
+        <!-- Nuevo apartado para seleccionar mazo -->
+        <div id="deckSelection">
+            <h2>Selecciona un Mazo</h2>
+            <select id="presetDeckSelect">
+                <option value="">-- Selecciona un mazo --</option>
+                <option value="paises">Países</option>
+                <option value="ciudades">Ciudades Famosas</option>
+                <option value="animales">Animales</option>
+                <option value="frutas">Frutas</option>
+                <option value="personajesHistoricos">Personajes Históricos</option>
+                <option value="peliculasClasicas">Películas Clásicas</option>
+                <option value="deportes">Deportes</option>
+                <option value="espacio">Cosas del Espacio</option>
+                <option value="librosClasicos">Libros Clásicos</option>
+                <option value="naturaleza">Elementos de la Naturaleza</option>
+                <option value="custom">Mazo Creado</option>
+                <!-- Puedes agregar más opciones aquí si es necesario -->
+            </select>
+            <button id="selectDeckBtn">Seleccionar Mazo</button>
+            <button id="infoBtn">¿Cómo Jugar?</button>
+        </div>
+
+        <!-- Sección para crear un mazo -->
+        <div id="createDeck" style="display: none;">
+            <h2>Crear Mazo</h2>
+            <input type="text" id="locationInput" placeholder="Introduce un sitio...">
+            <button id="addLocationBtn">Añadir Sitio</button>
+            <ul id="locationsList"></ul>
+            <button id="doneBtn">Terminar</button>
+            <button class="backBtn" id="backToDeckSelectionBtn">Volver</button>
+        </div>
+
+        <!-- Sección para jugar -->
+        <div id="play" style="display: none;">
+            <h2>Jugar</h2>
+            <p>Introduce el número de jugadores:</p>
+            <input type="number" id="numPlayersInput" min="3" value="3">
+            <button id="startGameBtn">Iniciar Juego</button>
+            <div id="playerCards" style="display: none;">
+                <h3>Cartas Repartidas:</h3>
+                <p id="currentCard"></p>
+                <button id="nextCardBtn">Mostrar Siguiente Carta</button>
+            </div>
+            <button class="backBtn" id="backToDeckSelectionBtn2">Volver</button>
+        </div>
+
+        <!-- Nueva sección de información -->
+        <div id="info" style="display: none;">
+            <h2>¿Cómo Jugar a El Espía?</h2>
+            <p><strong>Objetivo:</strong> Descubrir quién es el espía antes de que adivine la ubicación.</p>
+            <ol>
+                <li>Cada jugador recibe una carta. Todos los jugadores, excepto uno, recibirán la misma ubicación.</li>
+                <li>El jugador que reciba la carta de "Espía" no sabrá la ubicación y debe adivinarla basándose en las
+                    preguntas y respuestas de los demás.</li>
+                <li>Los jugadores se turnan para hacer preguntas sobre la ubicación a los demás, tratando de descubrir
+                    quién es el espía sin revelar demasiada información.</li>
+                <li>El espía puede intentar adivinar la ubicación en cualquier momento durante el juego.</li>
+                <li>Si el espía adivina correctamente la ubicación, gana. Si los demás jugadores descubren al espía,
+                    ellos ganan.</li>
+            </ol>
+            <button class="backBtn" id="backToDeckSelectionBtn3">Volver</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deckSelection = document.getElementById('deckSelection');
+            const createDeckSection = document.getElementById('createDeck');
+            const playSection = document.getElementById('play');
+            const infoSection = document.getElementById('info');
+            const presetDeckSelect = document.getElementById('presetDeckSelect');
+            const selectDeckBtn = document.getElementById('selectDeckBtn');
+            const infoBtn = document.getElementById('infoBtn');
+            const backToDeckSelectionBtn = document.getElementById('backToDeckSelectionBtn');
+            const backToDeckSelectionBtn2 = document.getElementById('backToDeckSelectionBtn2');
+            const backToDeckSelectionBtn3 = document.getElementById('backToDeckSelectionBtn3');
+            const locationInput = document.getElementById('locationInput');
+            const addLocationBtn = document.getElementById('addLocationBtn');
+            const doneBtn = document.getElementById('doneBtn');
+            const locationsList = document.getElementById('locationsList');
+            const numPlayersInput = document.getElementById('numPlayersInput');
+            const startGameBtn = document.getElementById('startGameBtn');
+            const playerCardsSection = document.getElementById('playerCards');
+            const currentCard = document.getElementById('currentCard');
+            const nextCardBtn = document.getElementById('nextCardBtn');
+
+            let locations = [];
+            let gameDeck = [];
+            let currentPlayer = 0;
+            let showCardTimeout;
+            let showQuestionMarkTimeout;
+            let isShowingQuestionMark = false;
+
+            // Mazos predeterminados
+            const presetDecks = {
+                paises: [
+                    "Argentina", "Brasil", "Canadá", "China", "Egipto", "España",
+                    "Francia", "India", "Italia", "Japón", "México", "Rusia",
+                    "Sudáfrica", "Estados Unidos"
+                ],
+                ciudades: [
+                    "Nueva York", "Londres", "Tokio", "París", "Roma", "Sídney",
+                    "Berlín", "Beijing", "São Paulo", "Moscú", "Toronto", "Dubái",
+                    "Madrid", "Los Ángeles"
+                ],
+                animales: [
+                    "Elefante", "León", "Tigre", "Osos", "Jirafa", "Zebra",
+                    "Cebra", "Gorila", "Panda", "Canguro", "Hipopótamo", "Rinoceronte",
+                    "Lobo", "Águila"
+                ],
+                frutas: [
+                    "Manzana", "Banana", "Naranja", "Fresa", "Kiwi", "Mango",
+                    "Pera", "Uvas", "Piña", "Cereza", "Melón", "Sandía",
+                    "Granada", "Papaya"
+                ],
+                personajesHistoricos: [
+                    "Napoleón Bonaparte", "Albert Einstein", "Leonardo da Vinci",
+                    "Cleopatra", "William Shakespeare", "Mahatma Gandhi", "Julius Caesar",
+                    "George Washington", "Marilyn Monroe", "Martin Luther King Jr.",
+                    "Winston Churchill", "Sigmund Freud", "Isaac Newton", "Churchill"
+                ],
+                peliculasClasicas: [
+                    "Casablanca", "Lo que el viento se llevó", "El Padrino",
+                    "Lawrence de Arabia", "Los Siete Samuráis", "Citizen Kane",
+                    "Psycho", "La ventana indiscreta", "El Mago de Oz",
+                    "A Place in the Sun", "Ben-Hur", "El Halcón Maltés", "2001: Odisea en el Espacio", "Vertigo"
+                ],
+                deportes: [
+                    "Fútbol", "Baloncesto", "Tenis", "Rugby", "Golf", "Natación",
+                    "Atletismo", "Ciclismo", "Boxeo", "Artes Marciales Mixtas",
+                    "Voleibol", "Béisbol", "Hockey sobre Hielo", "Esquí"
+                ],
+                espacio: [
+                    "Sol", "Luna", "Marte", "Júpiter", "Saturno", "Urano",
+                    "Neptuno", "Plutón", "Vía Láctea", "Andrómeda", "Nebulosa",
+                    "Cometa Halley", "Agujeros Negros", "Estrella de Neutrones"
+                ],
+                librosClasicos: [
+                    "Don Quijote de la Mancha", "Orgullo y Prejuicio", "Moby Dick",
+                    "Cumbres borrascosas", "1984", "El Gran Gatsby", "Crimen y Castigo",
+                    "Alicia en el País de las Maravillas", "Los Tres Mosqueteros",
+                    "El retrato de Dorian Gray", "En busca del tiempo perdido", "Ana Karenina", "El viejo y el mar", "El Conde de Montecristo"
+                ],
+                naturaleza: [
+                    "Océano", "Montañas", "Bosques", "Desiertos", "Ríos",
+                    "Lagos", "Cascadas", "Selvas", "Playas", "Volcanes",
+                    "Árboles", "Animales Salvajes", "Praderas", "Cuevas"
+                ]
+
+            };
+
+            // Evento para seleccionar un mazo
+            selectDeckBtn.addEventListener('click', () => {
+                const selectedDeck = presetDeckSelect.value;
+                if (selectedDeck === "custom") {
+                    createDeckSection.style.display = 'block';
+                    playSection.style.display = 'none';
+                    deckSelection.style.display = 'none';
+                } else if (selectedDeck) {
+                    locations = presetDecks[selectedDeck];
+                    playSection.style.display = 'block';
+                    createDeckSection.style.display = 'none';
+                    deckSelection.style.display = 'none';
+                } else {
+                    alert('Por favor, selecciona un mazo para continuar.');
+                }
+            });
+
+            // Evento para mostrar la sección de información
+            infoBtn.addEventListener('click', () => {
+                infoSection.style.display = 'block';
+                deckSelection.style.display = 'none';
+            });
+
+            // Volver a la selección de mazo desde la sección de creación
+            backToDeckSelectionBtn.addEventListener('click', () => {
+                createDeckSection.style.display = 'none';
+                deckSelection.style.display = 'block';
+            });
+
+            // Volver a la selección de mazo desde la sección de juego
+            backToDeckSelectionBtn2.addEventListener('click', () => {
+                playSection.style.display = 'none';
+                deckSelection.style.display = 'block';
+            });
+
+            // Volver a la selección de mazo desde la sección de información
+            backToDeckSelectionBtn3.addEventListener('click', () => {
+                infoSection.style.display = 'none';
+                deckSelection.style.display = 'block';
+            });
+
+            // Añadir una ubicación al mazo creado
+            addLocationBtn.addEventListener('click', () => {
+                const location = locationInput.value.trim();
+                if (location) {
+                    locations.push(location);
+                    const li = document.createElement('li');
+                    li.textContent = location;
+
+                    // Crear botón de eliminar
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Eliminar';
+                    deleteBtn.style.marginLeft = '10px';
+                    deleteBtn.addEventListener('click', () => {
+                        const index = locations.indexOf(location);
+                        if (index > -1) {
+                            locations.splice(index, 1);
+                            locationsList.removeChild(li);
+                        }
+                    });
+
+                    li.appendChild(deleteBtn);
+                    locationsList.appendChild(li);
+                    locationInput.value = ''; // Limpiar el campo de entrada
+                } else {
+                    alert('Por favor, introduce un sitio válido.');
+                }
+            });
+
+            // Terminar la creación del mazo
+            doneBtn.addEventListener('click', () => {
+                if (locations.length > 0) {
+                    alert('Mazo creado con éxito.');
+                    createDeckSection.style.display = 'none';
+                    playSection.style.display = 'block';
+                } else {
+                    alert('El mazo está vacío. Añade al menos un sitio.');
+                }
+            });
+
+            // Iniciar el juego
+            startGameBtn.addEventListener('click', () => {
+                const numPlayers = parseInt(numPlayersInput.value);
+                if (numPlayers < 3) {
+                    alert('El número de jugadores debe ser al menos 3.');
+                    return;
+                }
+
+                const location = locations[Math.floor(Math.random() * locations.length)];
+                gameDeck = Array(numPlayers - 1).fill(location);
+                gameDeck.push('Espía');
+                shuffleArray(gameDeck);
+
+                currentPlayer = 0;
+                currentCard.textContent = '';
+                nextCardBtn.disabled = false;
+
+                playerCardsSection.style.display = 'block';
+                showNextCard();
+            });
+
+            // Mostrar la siguiente carta
+            nextCardBtn.addEventListener('click', () => {
+                clearTimeout(showCardTimeout);
+                clearTimeout(showQuestionMarkTimeout);
+                if (isShowingQuestionMark) {
+                    currentCard.textContent = '';
+                    isShowingQuestionMark = false;
+                    showNextCard();
+                } else {
+                    currentCard.textContent = '?';
+                    isShowingQuestionMark = true;
+                    showQuestionMark();
+                }
+            });
+
+            // Función para mostrar la carta actual o el signo de interrogación
+            function showNextCard() {
+                if (currentPlayer < gameDeck.length) {
+                    currentCard.textContent = `Jugador ${currentPlayer + 1}: ${gameDeck[currentPlayer]}`;
+                    currentPlayer++;
+                    isShowingQuestionMark = false;
+
+                    showCardTimeout = setTimeout(() => {
+                        currentCard.textContent = '';
+                        isShowingQuestionMark = true;
+                        showQuestionMark();
+                    }, 60000);
+                } else {
+                    currentCard.textContent = 'Todas las cartas han sido mostradas.';
+                    nextCardBtn.disabled = true;
+                }
+            }
+
+            // Función para mostrar el signo de interrogación
+            function showQuestionMark() {
+                if (currentPlayer < gameDeck.length) {
+                    currentCard.textContent = '?';
+                    showQuestionMarkTimeout = setTimeout(() => {
+                        showNextCard();
+                    }, 30000);
+                }
+            }
+
+            // Función para mezclar el mazo
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
