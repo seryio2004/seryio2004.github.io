@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
         deportes: ["Fútbol", "Baloncesto", "Tenis", "Rugby", "Golf", "Natación", "Atletismo", "Ciclismo", "Boxeo", "Artes Marciales Mixtas", "Voleibol", "Béisbol", "Hockey sobre Hielo", "Esquí"],
         espacio: ["Sol", "Luna", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno", "Plutón", "Vía Láctea", "Andrómeda", "Nebulosa", "Cometa Halley", "Agujeros Negros", "Estrella de Neutrones"],
         librosClasicos: ["Don Quijote de la Mancha", "Orgullo y Prejuicio", "Moby Dick", "Cumbres borrascosas", "1984", "El Gran Gatsby", "Crimen y Castigo", "Alicia en el País de las Maravillas", "Los Tres Mosqueteros", "El retrato de Dorian Gray", "En busca del tiempo perdido", "Ana Karenina", "El viejo y el mar", "El Conde de Montecristo"],
-        naturaleza: ["Océano", "Montañas", "Bosques", "Desiertos", "Ríos", "Lagos", "Cascadas", "Selvas", "Playas", "Volcanes", "Árboles", "Animales Salvajes", "Praderas", "Cuevas"]
+        naturaleza: ["Océano", "Montañas", "Bosques", "Desiertos", "Ríos", "Lagos", "Cascadas", "Selvas", "Playas", "Volcanes", "Árboles", "Animales Salvajes", "Praderas", "Cuevas"],
+        niggas:["obama", "diddy", "TRAVIESO ESCROTO",""]
     };
 
     // Mostrar u ocultar el menú de selección
