@@ -20,11 +20,8 @@
       </nav>
     </header>
     <main>
-      <!-- Sección: Mazo Predeterminado -->
       <section id="deck" class="section active">
-        <div class="card-selector">
-          <h2>Elige tu Mazo</h2>
-          <div class="select-grid">
+        <div class="select-grid">
             <div class="card-option" data-value="paises">Países</div>
             <div class="card-option" data-value="ciudades">Ciudades</div>
             <div class="card-option" data-value="animales">Animales</div>
@@ -40,22 +37,10 @@
             <div class="card-option" data-value="musica">Música</div>
             <div class="card-option" data-value="tecnologia">Tecnología</div>
             <div class="card-option" data-value="profesiones">Profesiones</div>
-          </div>
         </div>
+        
       </section>
 
-      <!-- Sección: Mazo Personalizado -->
-      <section id="custom" class="section">
-        <h2>Crea tu Mazo</h2>
-        <div class="custom-deck">
-          <input type="text" id="locationInput" placeholder="Ingresa un sitio...">
-          <button id="addLocationBtn" class="action-btn">Añadir</button>
-          <ul id="locationsList"></ul>
-          <button id="doneBtn" class="action-btn">Guardar Mazo</button>
-        </div>
-      </section>
-
-      <!-- Sección: Juego -->
       <section id="play" class="section">
         <h2>¡A Jugar!</h2>
         <div class="player-setup">
@@ -68,24 +53,8 @@
           <button id="nextCardBtn" class="action-btn">Siguiente Carta</button>
         </div>
       </section>
-
-      <!-- Sección: Instrucciones -->
-      <section id="info" class="section">
-        <h2>¿Cómo Jugar?</h2>
-        <ol class="instructions">
-          <li>Cada jugador recibe una carta. Todos, excepto uno, obtienen la misma ubicación.</li>
-          <li>El que reciba la carta de "Espía" no conoce la ubicación y debe adivinarla.</li>
-          <li>Se realizan preguntas para descubrir al espía sin revelar la ubicación.</li>
-          <li>El espía puede adivinar en cualquier momento.</li>
-          <li>Si acierta, gana; de lo contrario, ganan los demás.</li>
-        </ol>
-        <button id="backFromInfo" class="action-btn">Volver</button>
-      </section>
     </main>
-    <footer>
-      <p>&copy; 2025 LosPajarosNoExisten</p>
-    </footer>
   </div>
-  <script src="./function.js"></script>
+  <script src="./function.js" defer></script>
 </body>
 </html>
