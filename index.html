@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>El Espía - Versión Sorprendente</title>
   <link rel="stylesheet" href="./style.css">
 </head>
@@ -14,10 +14,14 @@
         <ul>
           <li data-section="deck" class="active">Mazo Predeterminado</li>
           <li data-section="play">Jugar</li>
+          <!-- Nuevo elemento para ir al mazo personalizado -->
+          <li data-section="customDeck">Crear Mazo</li>
         </ul>
       </nav>
     </header>
+
     <main>
+      <!-- Sección de mazo predeterminado -->
       <section id="deck" class="section active">
         <div class="card-selector">
           <h2>Elige tu Mazo</h2>
@@ -41,6 +45,7 @@
         </div>
       </section>
 
+      <!-- Sección de juego -->
       <section id="play" class="section">
         <h2>¡A Jugar!</h2>
         <div class="player-setup">
@@ -48,9 +53,23 @@
           <input type="number" id="numPlayersInput" min="3" value="3">
           <button id="startGameBtn" class="action-btn">Empezar Juego</button>
         </div>
-        <div id="playerCards" class="game-area">
+        <div id="playerCards" class="game-area" style="display: none;">
           <div id="currentCard" class="game-card"></div>
           <button id="nextCardBtn" class="action-btn">Siguiente Carta</button>
+        </div>
+      </section>
+
+      <!-- Sección de mazo personalizado -->
+      <section id="customDeck" class="section">
+        <h2>Mazo Personalizado</h2>
+        <div class="custom-deck">
+          <input type="text" id="newCardInput" placeholder="Añade una nueva carta" />
+          <button id="addCardBtn" class="action-btn">Agregar Carta</button>
+          <ul id="customDeckList"></ul>
+          <!-- Botón para usar este mazo personalizado -->
+          <button id="useCustomDeckBtn" class="action-btn">
+            Usar este Mazo
+          </button>
         </div>
       </section>
     </main>
