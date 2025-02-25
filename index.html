@@ -1,82 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Espía</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>El Espía - Versión Sorprendente</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="container">
-        <h1>El Espía</h1>
-
-        <!-- Selector de mazo -->
-        <div id="deckSelection">
-            <div class="select-wrapper">
-                <label for="presetDeckSelect" class="select-label">Selecciona un Mazo</label>
-                <div id="presetDeckSelectWrapper" class="select-btn">
-                    <span id="presetDeckSelectLabel" data-value="">-- Selecciona un mazo --</span>
-                </div>
-                <div id="presetDeckSelectMenu" class="select-menu">
-                    <div data-value="paises">Países</div>
-                    <div data-value="ciudades">Ciudades Famosas</div>
-                    <div data-value="animales">Animales</div>
-                    <div data-value="frutas">Frutas</div>
-                    <div data-value="personajesHistoricos">Personajes Históricos</div>
-                    <div data-value="peliculasClasicas">Películas Clásicas</div>
-                    <div data-value="deportes">Deportes</div>
-                    <div data-value="espacio">Cosas del Espacio</div>
-                    <div data-value="librosClasicos">Libros Clásicos</div>
-                    <div data-value="naturaleza">Elementos de la Naturaleza</div>
-                    <div data-value="custom">Mazo Creado</div>
-                </div>
-            </div>
-            <button id="selectDeckBtn">Seleccionar Mazo</button>
-            <button id="infoBtn">¿Cómo Jugar?</button>
+  <div id="app">
+    <header class="app-header">
+      <h1>El Espía</h1>
+      <nav class="nav-menu">
+        <ul>
+          <li data-section="deck" class="active">Mazo Predeterminado</li>
+          <li data-section="custom">Mazo Personalizado</li>
+          <li data-section="play">Jugar</li>
+          <li data-section="info">Instrucciones</li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <!-- Sección: Mazo Predeterminado -->
+      <section id="deck" class="section active">
+        <div class="card-selector">
+          <h2>Elige tu Mazo</h2>
+          <div class="select-grid">
+            <div class="card-option" data-value="paises">Países</div>
+            <div class="card-option" data-value="ciudades">Ciudades</div>
+            <div class="card-option" data-value="animales">Animales</div>
+            <div class="card-option" data-value="frutas">Frutas</div>
+            <div class="card-option" data-value="personajesHistoricos">Históricos</div>
+            <div class="card-option" data-value="peliculasClasicas">Películas</div>
+            <div class="card-option" data-value="deportes">Deportes</div>
+            <div class="card-option" data-value="espacio">Espacio</div>
+            <div class="card-option" data-value="librosClasicos">Libros</div>
+            <div class="card-option" data-value="naturaleza">Naturaleza</div>
+            <div class="card-option" data-value="comidas">Comidas</div>
+            <div class="card-option" data-value="superheroes">Superhéroes</div>
+            <div class="card-option" data-value="musica">Música</div>
+            <div class="card-option" data-value="tecnologia">Tecnología</div>
+            <div class="card-option" data-value="profesiones">Profesiones</div>
+          </div>
+         
         </div>
+      </section>
 
-        <!-- Crear mazo -->
-        <div id="createDeck" style="display: none;">
-            <h2>Crear Mazo</h2>
-            <input type="text" id="locationInput" placeholder="Introduce un sitio...">
-            <button id="addLocationBtn">Añadir Sitio</button>
-            <ul id="locationsList"></ul>
-            <button id="doneBtn">Terminar</button>
-            <button class="backBtn" id="backToDeckSelectionBtn">Volver</button>
+      <!-- Sección: Mazo Personalizado -->
+      <section id="custom" class="section">
+        <h2>Crea tu Mazo</h2>
+        <div class="custom-deck">
+          <input type="text" id="locationInput" placeholder="Ingresa un sitio...">
+          <button id="addLocationBtn" class="action-btn">Añadir</button>
+          <ul id="locationsList"></ul>
+          <button id="doneBtn" class="action-btn">Guardar Mazo</button>
         </div>
+      </section>
 
-        <!-- Jugar -->
-        <div id="play" style="display: none;">
-            <h2>Jugar</h2>
-            <p>Introduce el número de jugadores:</p>
-            <input type="number" id="numPlayersInput" min="3" value="3">
-            <button id="startGameBtn">Iniciar Juego</button>
-            <div id="playerCards" style="display: none;">
-                <h3>Cartas Repartidas:</h3>
-                <p id="currentCard"></p>
-                <button id="nextCardBtn">Mostrar Siguiente Carta</button>
-            </div>
-            <button class="backBtn" id="backToDeckSelectionBtn2">Volver</button>
+      <!-- Sección: Juego -->
+      <section id="play" class="section">
+        <h2>¡A Jugar!</h2>
+        <div class="player-setup">
+          <label for="numPlayersInput">Número de Jugadores:</label>
+          <input type="number" id="numPlayersInput" min="3" value="3">
+          <button id="startGameBtn" class="action-btn">Empezar Juego</button>
         </div>
+        <div id="playerCards" class="game-area">
+          <div id="currentCard" class="game-card"></div>
+          <button id="nextCardBtn" class="action-btn">Siguiente Carta</button>
+        </div>
+      </section>
 
-        <!-- Información -->
-        <div id="info" style="display: none;">
-            <h2>¿Cómo Jugar a El Espía?</h2>
-            <p><strong>Objetivo:</strong> Descubrir quién es el espía antes de que adivine la ubicación.</p>
-            <ol>
-                <li>Cada jugador recibe una carta. Todos los jugadores, excepto uno, recibirán la misma ubicación.</li>
-                <li>El jugador que reciba la carta de "Espía" no sabrá la ubicación y debe adivinarla basándose en las preguntas y respuestas de los demás.</li>
-                <li>Los jugadores se turnan para hacer preguntas sobre la ubicación a los demás, tratando de descubrir quién es el espía sin revelar demasiada información.</li>
-                <li>El espía puede intentar adivinar la ubicación en cualquier momento durante el juego.</li>
-                <li>Si el espía adivina correctamente la ubicación, gana. Si los demás jugadores descubren al espía, ellos ganan.</li>
-            </ol>
-            <button class="backBtn" id="backToDeckSelectionBtn3">Volver</button>
-        </div>
-    </div>
-    <script src="function.js"></script>
-   
+      <!-- Sección: Instrucciones -->
+      <section id="info" class="section">
+        <h2>¿Cómo Jugar?</h2>
+        <ol class="instructions">
+          <li>Cada jugador recibe una carta. Todos, excepto uno, obtienen la misma ubicación.</li>
+          <li>El que reciba la carta de "Espía" no conoce la ubicación y debe adivinarla.</li>
+          <li>Se realizan preguntas para descubrir al espía sin revelar la ubicación.</li>
+          <li>El espía puede adivinar en cualquier momento.</li>
+          <li>Si acierta, gana; de lo contrario, ganan los demás.</li>
+        </ol>
+        <button id="backFromInfo" class="action-btn">Volver</button>
+      </section>
+    </main>
+    <footer>
+      <p>&copy; 2025 LosPajarosNoExisten</p>
+    </footer>
+  </div>
+  <script src="funtion.js"></script>
 </body>
-
 </html>
