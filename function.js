@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedDeck = null;
     let gameDeck = [];
     let currentPlayerIndex = 0;
-
-    // Mazos predeterminados
     const presetDecks = {
         "paises": ["Argentina", "Brasil", "Canadá", "China", "Egipto", "España", "Francia", "India", "Italia", "Japón", "México", "Rusia", "Sudáfrica", "Estados Unidos"],
         "ciudades": ["Nueva York", "Londres", "Tokio", "París", "Roma", "Sídney", "Berlín", "Beijing", "São Paulo", "Moscú", "Toronto", "Dubái", "Madrid", "Los Ángeles"],
@@ -22,19 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
         "profesiones": ["Doctor", "Ingeniero", "Profesor", "Abogado", "Arquitecto", "Científico", "Artista", "Músico", "Escritor", "Chef"]
     };
 
-    console.log("Mazos disponibles:", Object.keys(presetDecks)); // Depuración
 
-    // Selección de mazo
-    const cardOptions = document.querySelectorAll(".card-option");
-    cardOptions.forEach(option => {
+    console.log("Mazos disponibles:", Object.keys(presetDecks));
+
+    document.querySelectorAll(".card-option").forEach(option => {
         option.addEventListener("click", () => {
-            cardOptions.forEach(opt => opt.classList.remove("selected"));
+            document.querySelectorAll(".card-option").forEach(opt => opt.classList.remove("selected"));
             option.classList.add("selected");
 
             const deckKey = option.getAttribute("data-value");
-            console.log("Clave seleccionada:", deckKey);
-
-            if (presetDecks.hasOwnProperty(deckKey)) {
+            if (presetDecks[deckKey]) {
                 selectedDeck = [...presetDecks[deckKey]];
                 console.log("Mazo seleccionado:", selectedDeck);
             } else {
@@ -42,15 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Mazo no encontrado:", deckKey);
             }
 
-            if (selectedDeck.length > 0) {
-                switchToSection("play");
-            } else {
-                alert("Mazo vacío o no encontrado.");
-            }
+            selectedDeck.length ? switchToSection("play") : alert("Mazo vacío o no encontrado.");
         });
     });
 
-    // Iniciar juego
     const startGameBtn = document.getElementById("startGameBtn");
     const numPlayersInput = document.getElementById("numPlayersInput");
     const playerCardsSection = document.getElementById("playerCards");
@@ -60,18 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (startGameBtn) {
         startGameBtn.addEventListener("click", () => {
             const numPlayers = parseInt(numPlayersInput.value);
-            if (numPlayers < 3) {
-                alert("Debe haber al menos 3 jugadores.");
-                return;
-            }
-            if (!selectedDeck || selectedDeck.length === 0) {
-                alert("No hay un mazo seleccionado.");
-                return;
-            }
+            if (numPlayers < 3) return alert("Debe haber al menos 3 jugadores.");
+            if (!selectedDeck || selectedDeck.length === 0) return alert("No hay un mazo seleccionado.");
 
-            const randomIndex = Math.floor(Math.random() * selectedDeck.length);
-            const chosenLocation = selectedDeck[randomIndex];
-
+            const chosenLocation = selectedDeck[Math.floor(Math.random() * selectedDeck.length)];
             gameDeck = Array(numPlayers - 1).fill(chosenLocation);
             gameDeck.push("Espía");
             shuffleArray(gameDeck);
@@ -87,11 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentPlayerIndex >= gameDeck.length) {
             currentCard.innerHTML = `<span class="card-text">Fin del juego</span>`;
             nextCardBtn.disabled = true;
-            return;
+        } else {
+            currentCard.innerHTML = `<span class="card-text">Jugador ${currentPlayerIndex + 1}: ${gameDeck[currentPlayerIndex]}</span>`;
+            currentPlayerIndex++;
         }
-
-        currentCard.innerHTML = `<span class="card-text">Jugador ${currentPlayerIndex + 1}: ${gameDeck[currentPlayerIndex]}</span>`;
-        currentPlayerIndex++;
     }
 
     function shuffleArray(array) {
@@ -104,4 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function switchToSection(sectionId) {
         document.querySelectorAll("section").forEach(sec => sec.classList.toggle("active", sec.id === sectionId));
     }
+
+    nextCardBtn?.addEventListener("click", showNextCard);
 });
