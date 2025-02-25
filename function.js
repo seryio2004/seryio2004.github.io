@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedDeck = null;
     let gameDeck = [];
     let currentPlayerIndex = 0;
-    let showingPlaceholder = false; // Variable para controlar el estado "???"
+    let showingPlaceholder = false; // Controla el estado "???"
   
     // Mazos predeterminados
     const presetDecks = {
@@ -44,8 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
         option.classList.add('selected');
   
         // **Seleccionar mazo y pasar a la pantalla de juego**
-        selectedDeck = presetDecks[option.getAttribute('data-value')];
-        switchToSection('play');
+        const deckKey = option.getAttribute('data-value');
+        selectedDeck = presetDecks[deckKey] || [];
+        console.log('Mazo seleccionado:', selectedDeck); // Depuración en consola
+  
+        if (selectedDeck.length > 0) {
+          switchToSection('play');
+        } else {
+          alert("Mazo vacío o no encontrado.");
+        }
       });
     });
   
@@ -77,6 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
         gameDeck.push("Espía");
         shuffleArray(gameDeck);
   
+        console.log('Cartas mezcladas:', gameDeck); // Depuración en consola
+  
         // **Inicializar el índice del jugador**
         currentPlayerIndex = 0;
         playerCardsSection.style.display = "block";
@@ -94,6 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // **Mostrar cartas una por una con el efecto "???"**
     function showNextCard() {
+      if (currentPlayerIndex >= gameDeck.length) {
+        currentCard.innerHTML = `<span class="card-text">Fin del juego</span>`;
+        nextCardBtn.disabled = true; // **Desactivar el botón cuando termine el juego**
+        console.log("Fin del juego.");
+        return;
+      }
+  
       if (showingPlaceholder) {
         // **Si se estaba mostrando "???", ahora sí mostramos la carta real**
         currentCard.innerHTML = `<span class="card-text">Jugador ${currentPlayerIndex + 1}: ${gameDeck[currentPlayerIndex]}</span>`;
@@ -103,17 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
           currentCard.classList.remove("card-flip");
         }, 600);
   
+        console.log(`Carta mostrada para el Jugador ${currentPlayerIndex + 1}: ${gameDeck[currentPlayerIndex]}`);
+  
         currentPlayerIndex++; // Avanza al siguiente jugador después de mostrar la carta real
         showingPlaceholder = false;
       } else {
         // **Mostrar "???" antes de la carta real**
-        if (currentPlayerIndex < gameDeck.length) {
-          currentCard.innerHTML = `<span class="card-placeholder">???</span>`;
-          showingPlaceholder = true;
-        } else {
-          currentCard.innerHTML = `<span class="card-text">Fin del juego</span>`;
-          nextCardBtn.disabled = true; // **Desactivar el botón cuando termine el juego**
-        }
+        currentCard.innerHTML = `<span class="card-placeholder">???</span>`;
+        showingPlaceholder = true;
+        console.log("Mostrando ??? antes de revelar carta.");
       }
     }
   
@@ -125,3 +139,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+  
