@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,6 +8,7 @@
   <!-- Asegúrate de que "style.css" contenga las reglas para el flip 3D -->
   <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
   <div id="app">
     <header class="app-header">
@@ -55,42 +57,40 @@
       </section>
 
       <!-- Sección de juego -->
-   <!-- Sección de juego -->
-<section id="play" class="section">
-  <h2>¡A Jugar!</h2>
-  <div class="player-setup">
-    <label for="numPlayersInput">Número de Jugadores:</label>
-    <input type="number" id="numPlayersInput" min="3" value="3">
-    <button id="startGameBtn" class="action-btn">Empezar Juego</button>
-  </div>
-
-  <div id="playerCards" class="game-area" style="display: none;">
-
-    <!-- Carta con front/back ya en el HTML -->
-    <div id="currentCard" class="game-card">
-      <div id="cardFlipper" class="card-flipper">
-        <div id="cardFlipperInner" class="card-flipper-inner">
-
-          <!-- Cara frontal (??? por defecto) -->
-          <div id="cardFront" class="card-face card-front">???</div>
-
-          <!-- Cara trasera (contenido real; lo iremos actualizando con JS) -->
-          <div id="cardBack" class="card-face card-back"></div>
+      <!-- Sección de juego -->
+      <section id="play" class="section">
+        <h2>¡A Jugar!</h2>
+        <div class="player-setup">
+          <label for="numPlayersInput">Número de Jugadores:</label>
+          <input type="number" id="numPlayersInput" min="3" value="3">
+          <button id="startGameBtn" class="action-btn">Empezar Juego</button>
+          <label for="numSpiesInput">Número de Espías (sólo si más de 5 jugadores):</label>
+          <input type="number" id="numSpiesInput" min="1" value="1" disabled />
         </div>
-      </div>
-    </div>
 
-    <button id="nextCardBtn" class="action-btn">Siguiente Carta</button>
-  </div>
-</section>
+        <div id="playerCards" class="game-area" style="display: none;">
+
+          <!-- Carta con front/back ya en el HTML -->
+          <div id="currentCard" class="game-card">
+            <div id="cardFlipper" class="card-flipper">
+              <div id="cardFlipperInner" class="card-flipper-inner">
+
+                <!-- Cara frontal (??? por defecto) -->
+                <div id="cardFront" class="card-face card-front">???</div>
+
+                <!-- Cara trasera (contenido real; lo iremos actualizando con JS) -->
+                <div id="cardBack" class="card-face card-back"></div>
+              </div>
+            </div>
+          </div>
+
+          <button id="nextCardBtn" class="action-btn">Siguiente Carta</button>
+        </div>
+      </section>
 
 
-  <!-- Tu script principal con la lógica del juego y el flip -->
-  <script src="./function.js" defer></script>
+      <!-- Tu script principal con la lógica del juego y el flip -->
+      <script src="./function.js" defer></script>
 </body>
+
 </html>
-
-
-
-
-

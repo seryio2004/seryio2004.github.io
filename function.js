@@ -25,25 +25,35 @@ document.addEventListener("DOMContentLoaded", () => {
     "profesiones": ["Doctor", "Ingeniero", "Profesor", "Abogado", "Arquitecto", "Científico", "Artista", "Músico", "Escritor", "Chef"]
   };
 
-  // Referencias de elementos
-  const startGameBtn     = document.getElementById("startGameBtn");
-  const numPlayersInput  = document.getElementById("numPlayersInput");
+  const startGameBtn = document.getElementById("startGameBtn");
+  const numPlayersInput = document.getElementById("numPlayersInput");
+  const numSpiesInput = document.getElementById("numSpiesInput"); // <-- NUEVO
   const playerCardsSection = document.getElementById("playerCards");
-  const nextCardBtn      = document.getElementById("nextCardBtn");
+  const nextCardBtn = document.getElementById("nextCardBtn");
 
-  // Referencias a la única carta que tendremos en pantalla
-  const cardFlipper      = document.getElementById("cardFlipper");
-  const cardFront        = document.getElementById("cardFront");
-  const cardBack         = document.getElementById("cardBack");
+  const cardFlipper = document.getElementById("cardFlipper");
+  const cardFront   = document.getElementById("cardFront");
+  const cardBack    = document.getElementById("cardBack");
 
-  // =============== LÓGICA DE MAZOS PREDEFINIDOS ===============
+  // (2) Cada vez que cambie el número de jugadores, revisamos si hay > 5
+  numPlayersInput.addEventListener("input", () => {
+    const numPlayers = parseInt(numPlayersInput.value);
+    if (numPlayers > 5) {
+      // Habilitamos la entrada de espías
+      numSpiesInput.disabled = false;
+    } else {
+      // Deshabilitamos y forzamos 1 espía
+      numSpiesInput.disabled = true;
+      numSpiesInput.value = "1";
+    }
+  });
+
+  // (3) Lógica para mazos predeterminados (igual que antes)
   document.querySelectorAll(".card-option").forEach(option => {
     option.addEventListener("click", () => {
-      // Quitar selección previa
       document.querySelectorAll(".card-option").forEach(opt => opt.classList.remove("selected"));
       option.classList.add("selected");
 
-      // Obtiene la key del mazo
       const deckKey = option.getAttribute("data-value");
       if (presetDecks[deckKey]) {
         selectedDeck = [...presetDecks[deckKey]];
@@ -52,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedDeck = [];
         console.error("Mazo no encontrado:", deckKey);
       }
-
       if (selectedDeck.length) {
         switchToSection("play");
       } else {
@@ -61,9 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // =============== INICIAR PARTIDA ===============
+  // (4) Al iniciar el juego
   startGameBtn?.addEventListener("click", () => {
     const numPlayers = parseInt(numPlayersInput.value);
+
     if (numPlayers < 3) {
       alert("Debe haber al menos 3 jugadores.");
       return;
@@ -73,41 +83,54 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Crear el deck de la partida
+    // (5) Si numPlayers > 5 => leemos de numSpiesInput, si no => 1 espía
+    let spiesCount = 1; // valor por defecto
+    if (numPlayers > 5) {
+      const inputSpies = parseInt(numSpiesInput.value);
+      // Validación básica: no puede haber más espías que (jugadores - 1)
+      if (inputSpies < 1 || inputSpies >= numPlayers) {
+        alert("Número de espías inválido. Debe ser al menos 1 y menor que el total de jugadores.");
+        return;
+      }
+      spiesCount = inputSpies;
+    }
+
+    // (6) Creamos el deck: # de espías = spiesCount, resto = ubicación
     const chosenLocation = selectedDeck[Math.floor(Math.random() * selectedDeck.length)];
-    gameDeck = Array(numPlayers - 1).fill(chosenLocation);
-    gameDeck.push("Espía");
+    const totalLocations = numPlayers - spiesCount; // cuántos NO espías
+    gameDeck = Array(totalLocations).fill(chosenLocation);
+
+    for (let i = 0; i < spiesCount; i++) {
+      gameDeck.push("Espía");
+    }
     shuffleArray(gameDeck);
 
+    // Reseteamos
     currentPlayerIndex = 0;
     showingFront = true;
 
-    // Mostrar la sección de juego y habilitar botón
+    // Mostramos sección de juego
     playerCardsSection.style.display = "block";
     nextCardBtn.disabled = false;
 
-    // Estado inicial de la carta
     cardFront.textContent = "???";
     cardBack.textContent  = "";
     cardFlipper.classList.remove("flip");
   });
 
-  // =============== SIGUIENTE CARTA (FLIP) ===============
+  // (7) Siguiente Carta (flip)
   nextCardBtn?.addEventListener("click", () => {
     if (showingFront) {
-      // Mostrar la parte trasera (espía o ubicación)
       if (currentPlayerIndex >= gameDeck.length) {
         cardFront.textContent = "Fin del juego";
         cardBack.textContent  = "";
-        nextCardBtn.disabled  = true;
+        nextCardBtn.disabled = true;
         return;
       }
-
       cardBack.textContent = `Jugador ${currentPlayerIndex + 1}: ${gameDeck[currentPlayerIndex]}`;
-      cardFlipper.classList.add("flip");  // Se voltea a la trasera
+      cardFlipper.classList.add("flip");
       showingFront = false;
     } else {
-      // Venimos de la trasera, quitamos flip y avanzamos al siguiente
       cardFlipper.classList.remove("flip");
       currentPlayerIndex++;
 
@@ -123,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // =============== FUNCIÓN PARA BARAJAR ===============
+  // (8) Resto de funciones (shuffle, switchToSection, etc.)
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -131,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // =============== FUNCIÓN PARA CAMBIAR SECCIONES ===============
   function switchToSection(sectionId) {
     document.querySelectorAll("section").forEach(sec => {
       sec.classList.toggle("active", sec.id === sectionId);
@@ -141,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Navegación en el menú
   document.querySelectorAll(".nav-menu ul li").forEach(item => {
     item.addEventListener("click", () => {
       const targetSection = item.getAttribute("data-section");
@@ -149,14 +170,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // =============== LÓGICA MAZO PERSONALIZADO ===============
+  // (9) Lógica para Mazo Personalizado (igual que antes)
   const addCardBtn      = document.getElementById("addCardBtn");
   const newCardInput    = document.getElementById("newCardInput");
   const customDeckList  = document.getElementById("customDeckList");
   const useCustomDeckBtn= document.getElementById("useCustomDeckBtn");
   let customDeck        = [];
 
-  // Agregar carta al mazo personalizado
   addCardBtn?.addEventListener("click", () => {
     const cardText = newCardInput.value.trim();
     if (cardText) {
@@ -166,7 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Renderizar la lista de cartas en el UL
   function renderCustomDeckList() {
     customDeckList.innerHTML = "";
     customDeck.forEach((item, index) => {
@@ -185,14 +204,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Usar el mazo personalizado
   useCustomDeckBtn?.addEventListener("click", () => {
     if (customDeck.length === 0) {
       alert("Tu mazo personalizado está vacío.");
       return;
     }
     selectedDeck = [...customDeck];
-    console.log("Mazo personalizado seleccionado:", selectedDeck);
     switchToSection("play");
   });
 });
