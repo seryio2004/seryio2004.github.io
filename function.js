@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let gameDeck = [];
   let currentPlayerIndex = 0;
 
+  // IMPORTANTE: declaramos showingFront en el ámbito global
+  let showingFront = true;
+
   // Lista de mazos predeterminados
   const presetDecks = {
     "paises": ["Argentina", "Brasil", "Canadá", "China", "Egipto", "España", "Francia", "India", "Italia", "Japón", "México", "Rusia", "Sudáfrica", "Estados Unidos"],
@@ -33,12 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const cardFront        = document.getElementById("cardFront");
   const cardBack         = document.getElementById("cardBack");
 
-  // Manejador para mazos predeterminados
+  // =============== LÓGICA DE MAZOS PREDEFINIDOS ===============
   document.querySelectorAll(".card-option").forEach(option => {
     option.addEventListener("click", () => {
+      // Quitar selección previa
       document.querySelectorAll(".card-option").forEach(opt => opt.classList.remove("selected"));
       option.classList.add("selected");
 
+      // Obtiene la key del mazo
       const deckKey = option.getAttribute("data-value");
       if (presetDecks[deckKey]) {
         selectedDeck = [...presetDecks[deckKey]];
@@ -47,12 +52,16 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedDeck = [];
         console.error("Mazo no encontrado:", deckKey);
       }
-      if (selectedDeck.length) switchToSection("play");
-      else alert("Mazo vacío o no encontrado.");
+
+      if (selectedDeck.length) {
+        switchToSection("play");
+      } else {
+        alert("Mazo vacío o no encontrado.");
+      }
     });
   });
 
-  // Al iniciar el juego
+  // =============== INICIAR PARTIDA ===============
   startGameBtn?.addEventListener("click", () => {
     const numPlayers = parseInt(numPlayersInput.value);
     if (numPlayers < 3) {
@@ -77,61 +86,44 @@ document.addEventListener("DOMContentLoaded", () => {
     playerCardsSection.style.display = "block";
     nextCardBtn.disabled = false;
 
-    // La primera vez, mostramos la cara frontal (???)
-    // y limpiamos la cara trasera para no mostrar nada previo
+    // Estado inicial de la carta
     cardFront.textContent = "???";
-    cardBack.textContent = "";
-
-    // Nos aseguramos de que no esté flippeada al iniciar
+    cardBack.textContent  = "";
     cardFlipper.classList.remove("flip");
   });
 
-  // Cada vez que pulsamos “Siguiente Carta”
+  // =============== SIGUIENTE CARTA (FLIP) ===============
   nextCardBtn?.addEventListener("click", () => {
-    // Si showingFront es true, significa que actualmente
-    // estamos mostrando la cara frontal (???).
     if (showingFront) {
-      // 1) Rellenamos la cara trasera con la información
+      // Mostrar la parte trasera (espía o ubicación)
       if (currentPlayerIndex >= gameDeck.length) {
-        // Si ya no hay más cartas en el deck
         cardFront.textContent = "Fin del juego";
         cardBack.textContent  = "";
+        nextCardBtn.disabled  = true;
         return;
       }
+
       cardBack.textContent = `Jugador ${currentPlayerIndex + 1}: ${gameDeck[currentPlayerIndex]}`;
-
-      // 2) Activamos la clase flip para voltear a la cara trasera
-      cardFlipper.classList.add("flip");
-
-      // 3) Cambiamos el estado => la próxima pulsación mostrará la frontal de la siguiente carta
+      cardFlipper.classList.add("flip");  // Se voltea a la trasera
       showingFront = false;
-
     } else {
-      // Aquí venimos de la cara trasera.
-      // Quitamos flip, avanzamos a la siguiente carta y volvemos a mostrar “???”
+      // Venimos de la trasera, quitamos flip y avanzamos al siguiente
       cardFlipper.classList.remove("flip");
-
-      // Avanzamos de carta
       currentPlayerIndex++;
 
-      // Si no hay más cartas, mostramos “Fin del juego”
       if (currentPlayerIndex >= gameDeck.length) {
         cardFront.textContent = "Fin del juego";
         cardBack.textContent  = "";
-        nextCardBtn.disabled = true; 
-        return;
+        nextCardBtn.disabled = true;
       } else {
-        // Reset frontal para la siguiente
         cardFront.textContent = "???";
-        cardBack.textContent  = "";  
+        cardBack.textContent  = "";
       }
-
-      // Próxima pulsación mostrará la trasera
       showingFront = true;
     }
   });
 
-  // Función para barajar
+  // =============== FUNCIÓN PARA BARAJAR ===============
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -139,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para cambiar sección
+  // =============== FUNCIÓN PARA CAMBIAR SECCIONES ===============
   function switchToSection(sectionId) {
     document.querySelectorAll("section").forEach(sec => {
       sec.classList.toggle("active", sec.id === sectionId);
@@ -149,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Navegación para cada elemento del menú
+  // Navegación en el menú
   document.querySelectorAll(".nav-menu ul li").forEach(item => {
     item.addEventListener("click", () => {
       const targetSection = item.getAttribute("data-section");
@@ -157,16 +149,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ---------------------
-  // Lógica Mazo Personalizado
-  // ---------------------
-  const addCardBtn = document.getElementById("addCardBtn");
-  const newCardInput = document.getElementById("newCardInput");
-  const customDeckList = document.getElementById("customDeckList");
-  const useCustomDeckBtn = document.getElementById("useCustomDeckBtn");
+  // =============== LÓGICA MAZO PERSONALIZADO ===============
+  const addCardBtn      = document.getElementById("addCardBtn");
+  const newCardInput    = document.getElementById("newCardInput");
+  const customDeckList  = document.getElementById("customDeckList");
+  const useCustomDeckBtn= document.getElementById("useCustomDeckBtn");
+  let customDeck        = [];
 
-  let customDeck = [];
-
+  // Agregar carta al mazo personalizado
   addCardBtn?.addEventListener("click", () => {
     const cardText = newCardInput.value.trim();
     if (cardText) {
@@ -176,6 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Renderizar la lista de cartas en el UL
   function renderCustomDeckList() {
     customDeckList.innerHTML = "";
     customDeck.forEach((item, index) => {
@@ -194,12 +185,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Usar el mazo personalizado
   useCustomDeckBtn?.addEventListener("click", () => {
     if (customDeck.length === 0) {
       alert("Tu mazo personalizado está vacío.");
       return;
     }
     selectedDeck = [...customDeck];
+    console.log("Mazo personalizado seleccionado:", selectedDeck);
     switchToSection("play");
   });
 });
